@@ -16,15 +16,15 @@ int main() {
     printf("Password: ");
 
     while (exit != 1) {
-        struct termios old_term, new_term;
-        tcgetattr(STDIN_FILENO, &old_term);
-        new_term = old_term;
-        new_term.c_lflag &= ~(ECHO | ICANON);
-        tcsetattr(STDIN_FILENO, TCSANOW, &new_term);
+        struct termios oldTerm, newTerm;
+        tcgetattr(STDIN_FILENO, &oldTerm);
+        newTerm = oldTerm;
+        newTerm.c_lflag &= ~(ECHO | ICANON);
+        tcsetattr(STDIN_FILENO, TCSANOW, &newTerm);
 
         character = getchar(); //Get Key
 
-        tcsetattr(STDIN_FILENO, TCSANOW, &old_term);
+        tcsetattr(STDIN_FILENO, TCSANOW, &oldTerm);
         // IF is necessary character == '\n' || character == '\r' || character == '\t'
         if (character == ENTER || character == TAB) {
             password[i] = '\0';

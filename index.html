@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+<head>
+        <meta charset="UTF-8">
+        <script src="https://unpkg.com/fabric@5.3.0/dist/fabric.min.js"></script>
+        <title>Editor De Camisa</title>
+        <style>
+                body {
+                        display: flex;
+                        justify-content: flex-start;
+                        align-items: center;
+                        height: 100vh;
+                        margin: 0;
+                        background-color: #f1f1f1;
+                }
+     
+                .sidebar {
+                        position: fixed;
+                        top: 0;
+                        right: 0;
+                        height: 100vh;
+                        width:30%;
+                        background-color: #ffffff;
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        justify-content: center;
+                }
+
+                .sidebar button {
+                        margin: 5px;
+                        padding: 10px 20px;
+                        user-select: none;
+                }
+
+                canvas {
+                        position: absolute;
+                        top: 25%;
+                        left: 0%;
+                        width: 50%;
+                        height: 50%;
+                        border: 2px solid goldenrod;
+                        cursor: default;
+                }
+
+                .resize-bar {
+                        background-color: #ccc;
+                        height: 10px;
+                        position: fixed;
+                        bottom: 85%;
+                        left: 5%;
+                        right: 0;
+                        height: 5%;
+                        width: 30%;
+                        cursor: default;
+                }
+                .resize-handle {
+                        background-color: red;
+                        width: 30px;
+                        height: 100%;
+                        position: absolute;
+                        left: 0%;
+                        transform: translateX(-50%);
+                        cursor: ew-resize;
+                }
+
+                #preview {
+                max-width: 100%;
+                max-height: 100%;
+            }
+
+            .red-dot {
+        position: absolute;
+        width: 30px; /* Ajusta el ancho según tus necesidades */
+        height: 30px; /* Ajusta la altura según tus necesidades */
+        cursor: grab;
+        display: none; /* Oculta la imagen por defecto, se mostrará en JavaScript cuando sea necesario */
+        user-select: none;
+        transform: scaleX(-1);
+}
+
+.non-clickable {
+    user-select: none;
+    cursor: default;
+}
+
+.file-container {
+    background-color: #ccc;
+    padding: 10px;
+    width: 500px;
+}
+
+.image-container {
+    display: flex;
+    align-items: center;
+}
+
+.image-preview {
+    margin-right: 10px; /* Espacio entre la imagen y el texto */
+}
+
+#fileName {
+    margin-left: 10px;
+}
+
+#image-preview-below-button {
+    height: 100px;
+    max-width: 100%;
+}
+
+
+        </style>
+</head>
+<body>
+
+        <div class="sidebar">
+
+            <div class="file-container">
+                <div class="image-container">
+                    <div id="image-preview-container" class="image-preview">
+                        <img id="imagePreview" src="" alt="Preview" style="display: none;" draggable="false">
+                    </div>
+                    <div id="fileName" class="non-clickable"></div>
+                </div>
+            </div>
+
+                <label for="fileInput" class="custom-file-input-label">
+                        
+                        <button type="button" class="custom-file-button" onclick="document.getElementById('input').click()">My device</button>
+                        <button id="downloadBtn">Descargar imagen</button>
+                        <button id="deleteBtn">Borrar imagen seleccionada</button>
+                        <input accept="image/*" type="file" name="image" id="input" style="display: none;"/>
+                    </div>
+                        
+                </label>
+                <!-- <input type="file" id="fileInput" name="image" id="input" accept="image/*" style="display: none;"> -->
+        </div>
+                <canvas id="canvas"></canvas>
+                <img id="red-dot" src="https://cdn-icons-png.flaticon.com/512/565/565888.png" class="red-dot" style="display: none;">
+
+
+                <div id="center-coordinates" class="coordinates1"></div>
+                <div id="top-coordinates" class="coordinates2"></div>
+
+<script>
+        const canvas = new fabric.Canvas("canvas");
+        let selectedObject = null; 
+        const deleteBtn = document.getElementById("deleteBtn"); 
+        let currentImageUrl = null; // variable to store the URL of the current image
+
+        canvas.setWidth(innerWidth - 900);
+        canvas.setHeight(innerHeight - 400);
+        input.onchange = (evnt) => {
+        const file = evnt.target.files[0];
+        console.log(file)
+        currentImageUrl = URL.createObjectURL(file); // update the current image URL
+        const imgNode = new Image();
+        imgNode.src = currentImageUrl;
+        imgNode.onload = () => {
+                const img = new fabric.Image(imgNode, {
+                        left: 100,
+                        top: 100,
+                        angle: 0,
+                        opacity: 1
+                });
+                const MAX_SIZE = 500;
+                const scaleFactor = Math.min(MAX_SIZE / img.width, MAX_SIZE / img.height);
+                img.scale(scaleFactor);
+                canvas.add(img);
+                console.log(img)
+                document.getElementById("imagePreview").src = currentImageUrl;
+                imagePreview.style.width = "200px";
+                imagePreview.style.display = "block";
+                input.value = ''; 
+            };
+        };
+
+        downloadBtn.onclick = () => {
+                const dataURL = canvas.toDataURL("image/png");
+                const a = document.createElement("a");
+                a.download = "image";
+                a.href = dataURL;
+                a.click();
+        };
+
+        deleteBtn.onclick = () => {
+                        if (selectedObject) {
+                                        canvas.remove(selectedObject);
+                                        canvas.renderAll();
+                                        selectedObject = null;
+                                        currentImageUrl = null; 
+                                        document.getElementById("imagePreview").style.display = "none";
+                        }
+        };
+
+        canvas.on("mouse:down", (event) => {
+            if (event.target) {
+                selectedObject = event.target;
+            } else {
+                selectedObject = null;
+            }
+        });
+
+        </script>
+
+</body>

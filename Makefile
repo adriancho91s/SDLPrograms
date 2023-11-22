@@ -11,7 +11,7 @@ SDL_LIBS = -lSDL2 -lSDL2_mixer -lSDL2_image -lSDL2_ttf
 SDL_INCLUDE = -I/usr/local/include/SDL2
 
 # Ruta del archivo de origen
-SOURCE = Grapher.c
+SOURCE = main.c
 
 # Opciones de compilación
 CFLAGS = -Wall -o $(TARGET) $(SOURCE) $(SDL_LIBS) $(SDL_INCLUDE)
